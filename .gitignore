@@ -1,3 +1,5 @@
 .rspec
 .byebug_history
-coverage/
+coverage
+.gems
+.bundle
