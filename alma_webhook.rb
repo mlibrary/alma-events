@@ -16,5 +16,6 @@ post '/' do
   else
     response.status = 400
   end
+  logger.info body
 end
 
