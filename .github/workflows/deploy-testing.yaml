@@ -10,6 +10,9 @@ on:
     workflows: [ 'Docker Build Main' ]
     types: [ completed ]
 
+env:
+  IMAGE_ID: ghcr.io/mlibrary/alma-webhook-unstable
+
 jobs:
   deploy:
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
@@ -45,8 +48,8 @@ jobs:
     - name: Automatic Deploy
       if: ${{ github.event_name == 'workflow_run' }}
       run: |
-        kubectl set image deployment web web=mlibrary/alma-webhook-unstable:${{ github.sha }}
+        kubectl set image deployment web web=$IMAGE_ID:${{ github.sha }}
     - name: Manual Deploy
       if: ${{ github.event_name == 'workflow_dispatch' }}
       run: |
-        kubectl set image deployment web web=mlibrary/alma-webhook-unstable:${{ steps.tag_check.outputs.tag }}
+        kubectl set image deployment web web=$IMAGE_ID:${{ steps.tag_check.outputs.tag }}

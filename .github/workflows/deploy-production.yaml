@@ -11,6 +11,9 @@ on:
     branches: [ main ]
     types: [ completed ]
 
+env:
+  IMAGE_ID: ghcr.io/mlibrary/alma-webhook
+
 jobs:
   deploy:
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
@@ -41,13 +44,11 @@ jobs:
         echo ${{ secrets.HATCHER_CLUSTER_CA }} | base64 -d > ${HOME}/.kube/certs/cluster/k8s-ca.crt
         kubectl config set-cluster cluster --certificate-authority=${HOME}/.kube/certs/cluster/k8s-ca.crt --server=https://hatcher.kubernetes.lib.umich.edu
         kubectl config set-credentials default --token=`echo ${{ secrets.HATCHER_TESTING_TOKEN }} | base64 -d`
-        kubectl config set-context default --cluster=cluster --user=default --namespace=alma-webhook-testing
+        kubectl config set-context default --cluster=cluster --user=default --namespace=alma-webhook
         kubectl config use-context default
     - name: Automatic Deploy
       if: ${{ github.event_name == 'workflow_run' }}
-      run: |
-        kubectl set image deployment web web=mlibrary/alma-webhook:${{ github.ref }}
+      run: kubectl set image deployment web web=$IMAGE_ID:${{ github.ref }}
     - name: Manual Deploy
       if: ${{ github.event_name == 'workflow_dispatch' }}
-      run: |
-        kubectl set image deployment web web=mlibrary/alma-webhook-unstable:${{ steps.tag_check.outputs.tag }}
+      run: kubectl set image deployment web web=$IMAGE_ID:${{ steps.tag_check.outputs.tag }}
