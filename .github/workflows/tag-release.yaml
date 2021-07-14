@@ -35,5 +35,5 @@ jobs:
         kubectl config set-context default --cluster=cluster --user=default --namespace=alma-webhook
         kubectl config use-context default
     - name: Automatic Deploy to Production
-      run: kubectl set image deployment web web=$IMAGE_ID:${{ github.event.release.tag_name }}
+      run: kubectl set image deployment web web=$PROD_IMAGE_ID:${{ github.event.release.tag_name }}
 
