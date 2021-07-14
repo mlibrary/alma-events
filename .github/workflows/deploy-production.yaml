@@ -6,25 +6,19 @@ on:
       tag:
         description: Release
         required: true
-  workflow_run:
-    workflows: [ 'Docker Tag Latest Release' ]
-    types: [ completed ]
 
 env:
   IMAGE_ID: ghcr.io/mlibrary/alma-webhook
 
 jobs:
   deploy:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
     - name: Clone latest repository
-      if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
     - name: Check that the tag exists
-      if: ${{ github.event_name == 'workflow_dispatch' }}
       id: tag_check
       run: |
         if git rev-parse 'refs/tags/${{ github.event.inputs.tag }}' &> /dev/null; then
@@ -45,9 +39,5 @@ jobs:
         kubectl config set-credentials default --token=`echo ${{ secrets.HATCHER_PRODUCTION_TOKEN }} | base64 -d`
         kubectl config set-context default --cluster=cluster --user=default --namespace=alma-webhook
         kubectl config use-context default
-    - name: Automatic Deploy
-      if: ${{ github.event_name == 'workflow_run' }}
-      run: kubectl set image deployment web web=$IMAGE_ID:${{ github.ref }}
     - name: Manual Deploy
-      if: ${{ github.event_name == 'workflow_dispatch' }}
       run: kubectl set image deployment web web=$IMAGE_ID:${{ steps.tag_check.outputs.tag }}
