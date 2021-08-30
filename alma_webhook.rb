@@ -18,4 +18,3 @@ post '/' do
   end
   logger.info body
 end
-
