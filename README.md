@@ -44,4 +44,4 @@ docker-compose up -d
 In a browser, go to http://localhost:4567 to see the website.
 
 # Kubernetes Configuration
-The Kubernetes deployment configuration libes in [Alma-Apps-Kube](https://github.com/mlibrary/alma-apps-kube)
+The Kubernetes deployment configuration lives in [alma-utilities-kube](https://github.com/mlibrary/alma-utilities-kube)
