@@ -7,6 +7,8 @@ on:
 env:
   PROD_IMAGE_ID: ghcr.io/mlibrary/alma-webhook
   UNSTABLE_IMAGE_ID: ghcr.io/mlibrary/alma-webhook-unstable
+  NAMESPACE: alma-utilities
+  CLUSTER_TOKEN: ${{ secrets.HATCHER_PRODUCTION_TOKEN }}
 
 jobs:
   build:
@@ -31,8 +33,8 @@ jobs:
         mkdir -p ${HOME}/.kube/certs/cluster
         echo ${{ secrets.HATCHER_CLUSTER_CA }} | base64 -d > ${HOME}/.kube/certs/cluster/k8s-ca.crt
         kubectl config set-cluster cluster --certificate-authority=${HOME}/.kube/certs/cluster/k8s-ca.crt --server=https://hatcher.kubernetes.lib.umich.edu
-        kubectl config set-credentials default --token=`echo ${{ secrets.HATCHER_PRODUCTION_TOKEN }} | base64 -d`
-        kubectl config set-context default --cluster=cluster --user=default --namespace=alma-webhook
+        kubectl config set-credentials default --token=`echo $CLUSTER_TOKEN | base64 -d`
+        kubectl config set-context default --cluster=cluster --user=default --namespace=$NAMESPACE
         kubectl config use-context default
     - name: Automatic Deploy to Production
       run: kubectl set image deployment web web=$PROD_IMAGE_ID:${{ github.event.release.tag_name }}
