@@ -9,6 +9,7 @@ env:
   UNSTABLE_IMAGE_ID: ghcr.io/mlibrary/alma-webhook-unstable
   NAMESPACE: alma-utilities
   CLUSTER_TOKEN: ${{ secrets.HATCHER_PRODUCTION_TOKEN }}
+  TAG: ${{ github.event.release.tag_name }}
 
 jobs:
   build:
@@ -16,16 +17,20 @@ jobs:
     steps:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
-    - name: Log into registry
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Log into Github Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Clone latest repository
       uses: actions/checkout@v2
     - name: Tag latest release in Github Container Registry
       run: |
         docker pull $UNSTABLE_IMAGE_ID:${{ github.sha }}
-        docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:${{ github.event.release.tag_name }}
+        docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:$TAG
         docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:latest
-        docker push $PROD_IMAGE_ID:${{ github.event.release.tag_name }}
+        docker push $PROD_IMAGE_ID:$TAG
         docker push $PROD_IMAGE_ID:latest
     - uses: azure/setup-kubectl@v1
     - name: Authenticate with kubernetes
@@ -37,5 +42,5 @@ jobs:
         kubectl config set-context default --cluster=cluster --user=default --namespace=$NAMESPACE
         kubectl config use-context default
     - name: Automatic Deploy to Production
-      run: kubectl set image deployment web web=$PROD_IMAGE_ID:${{ github.event.release.tag_name }}
+      run: kubectl set image deployment web web=$PROD_IMAGE_ID:$TAG
 
