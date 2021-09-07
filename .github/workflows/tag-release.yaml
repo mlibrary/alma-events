@@ -4,12 +4,12 @@ on:
   release:
     types: [ released ]
 
-#env:
+env:
+  TAG: ${{ github.event.release.tag_name }}
   #PROD_IMAGE_ID: ghcr.io/mlibrary/alma-webhook
   #UNSTABLE_IMAGE_ID: ghcr.io/mlibrary/alma-webhook-unstable
   #NAMESPACE: alma-utilities
   #CLUSTER_TOKEN: ${{ secrets.HATCHER_PRODUCTION_TOKEN }}
-  #TAG: ${{ github.event.release.tag_name }}
 
 jobs:
   build:
@@ -32,9 +32,9 @@ jobs:
         PROD_IMAGE_ID: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}
       run: |
         docker pull $UNSTABLE_IMAGE_ID:${{ github.sha }}
-        docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:$TAG
+        docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:${{ env.TAG }}
         docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:latest
-        docker push $PROD_IMAGE_ID:$TAG
+        docker push $PROD_IMAGE_ID:${{ env.TAG }}
         docker push $PROD_IMAGE_ID:latest
     - name: Deploy to production
       uses: ./.github/actions/deploy-to-kubernetes
