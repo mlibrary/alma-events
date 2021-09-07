@@ -1,19 +1,16 @@
-name: Docker Tag Latest Release and Deploy to Production
+name: Tag Latest Release Images and Deploy to Production
 
 on:
   release:
     types: [ released ]
 
 env:
-  PROD_IMAGE_ID: ghcr.io/mlibrary/alma-webhook
-  UNSTABLE_IMAGE_ID: ghcr.io/mlibrary/alma-webhook-unstable
-  NAMESPACE: alma-utilities
-  CLUSTER_TOKEN: ${{ secrets.HATCHER_PRODUCTION_TOKEN }}
   TAG: ${{ github.event.release.tag_name }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: production
     steps:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -26,21 +23,21 @@ jobs:
     - name: Clone latest repository
       uses: actions/checkout@v2
     - name: Tag latest release in Github Container Registry
+      env: 
+        UNSTABLE_IMAGE_ID: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}-unstable
+        PROD_IMAGE_ID: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}
       run: |
         docker pull $UNSTABLE_IMAGE_ID:${{ github.sha }}
-        docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:$TAG
+        docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:${{ env.TAG }}
         docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:latest
-        docker push $PROD_IMAGE_ID:$TAG
+        docker push $PROD_IMAGE_ID:${{ env.TAG }}
         docker push $PROD_IMAGE_ID:latest
-    - uses: azure/setup-kubectl@v1
-    - name: Authenticate with kubernetes
-      run: |
-        mkdir -p ${HOME}/.kube/certs/cluster
-        echo ${{ secrets.HATCHER_CLUSTER_CA }} | base64 -d > ${HOME}/.kube/certs/cluster/k8s-ca.crt
-        kubectl config set-cluster cluster --certificate-authority=${HOME}/.kube/certs/cluster/k8s-ca.crt --server=https://hatcher.kubernetes.lib.umich.edu
-        kubectl config set-credentials default --token=`echo $CLUSTER_TOKEN | base64 -d`
-        kubectl config set-context default --cluster=cluster --user=default --namespace=$NAMESPACE
-        kubectl config use-context default
-    - name: Automatic Deploy to Production
-      run: kubectl set image deployment web web=$PROD_IMAGE_ID:$TAG
-
+    - name: Deploy to production
+      uses: ./.github/actions/deploy-to-kubernetes
+      with:
+        github_username: ${{ github.actor }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        image: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ env.TAG }}
+        cluster_ca: ${{ secrets.HATCHER_CLUSTER_CA }}
+        namespace_token: ${{ secrets.HATCHER_TOKEN }}
+        namespace: ${{ secrets.NAMESPACE }}
