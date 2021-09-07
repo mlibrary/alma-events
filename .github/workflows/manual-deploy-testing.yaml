@@ -10,8 +10,8 @@ on:
 #environment:
   #name: testing
 
-#env:
-  #IMAGE_NAME: alma-webhook-unstable
+env:
+  environment: testing
   #NAMESPACE_TOKEN: ${{ secrets.HATCHER_TESTING_TOKEN }}
   #NAMESPACE: alma-utilities-testing
 
@@ -61,8 +61,8 @@ jobs:
         context: .
         push: true
         tags: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{steps.tag_check.outputs.tag}}
-    - name: Deploy to ${{ secrets.NAMESPACE }}
-      uses: ./.github/actions/deploy-to-hatcher
+    - name: Deploy to ${{ github.env.environment }}
+      uses: ./.github/actions/deploy-to-kubernetes
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}

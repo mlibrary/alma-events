@@ -1,5 +1,5 @@
-name: 'Deploy to Hatcher Cluster' 
-description: 'Deploys ghcr image to Hatcher Kubernetes Cluster'
+name: 'Deploy to Kubernetes Cluster' 
+description: 'Deploys ghcr image to a Kubernetes Cluster'
 inputs:
   github_username:
     required: true
