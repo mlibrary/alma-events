@@ -1,5 +1,5 @@
-name: 'Deploy to Hatcher Cluster' 
-description: 'Deploys ghcr image to Hatcher Kubernetes Cluster'
+name: 'Deploy to Kubernetes Cluster' 
+description: 'Deploys ghcr image to a Kubernetes Cluster'
 inputs:
   github_username:
     required: true
@@ -7,9 +7,12 @@ inputs:
     required: true
   image:
     required: true
-    description: IMAGE_NAME:TAG (don't need mlibrary)
+    description: Full Image path. 
   cluster_ca:
     required: true
+  cluster_server:
+    require: true
+    default: https://hatcher.kubernetes.lib.umich.edu
   namespace_token:
     required: true
   namespace:
@@ -28,7 +31,7 @@ runs:
         username: ${{ inputs.github_username }}
         password: ${{ inputs.github_token }}
     - name: Check that the tag exists
-      run: docker manifest inspect ghcr.io/mlibrary/${{ inputs.image }} > /dev/null
+      run: docker manifest inspect ${{ inputs.image }} > /dev/null
       shell: bash
     - uses: azure/setup-kubectl@v1
     - name: Authenticate with kubernetes
@@ -36,10 +39,10 @@ runs:
       run: |
         mkdir -p ${HOME}/.kube/certs/cluster
         echo ${{ inputs.cluster_ca }} | base64 -d > ${HOME}/.kube/certs/cluster/k8s-ca.crt
-        kubectl config set-cluster cluster --certificate-authority=${HOME}/.kube/certs/cluster/k8s-ca.crt --server=https://hatcher.kubernetes.lib.umich.edu
+        kubectl config set-cluster cluster --certificate-authority=${HOME}/.kube/certs/cluster/k8s-ca.crt --server=${{ inputs.cluster_server }}
         kubectl config set-credentials default --token=`echo ${{ inputs.namespace_token }} | base64 -d`
         kubectl config set-context default --cluster=cluster --user=default --namespace=${{ inputs.namespace }}
         kubectl config use-context default
     - name: Deploy
       shell: bash
-      run: kubectl set image deployment ${{inputs.deployment }} ${{inputs.deployment}}=ghcr.io/mlibrary/${{ inputs.image }}
+      run: kubectl set image deployment ${{inputs.deployment }} ${{inputs.deployment}}=${{ inputs.image }}
