@@ -68,5 +68,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         image: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }}
         cluster_ca: ${{ secrets.HATCHER_CLUSTER_CA }}
-        namespace_token: ${{ secrets.NAMESPACE_TOKEN }}
+        namespace_token: ${{ secrets.HATCHER_TOKEN }}
         namespace: ${{ secrets.NAMESPACE }}
