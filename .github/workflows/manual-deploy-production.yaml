@@ -17,6 +17,8 @@ jobs:
     steps:
     - name: Clone latest repository
       uses: actions/checkout@v2
+    - name: echo tags
+      run: git rev-parse 'refs/tags/${{ github.event.inputs.tag }}'
     - name: Check that the tag exists in repo
       id: tag_check
       run: |
