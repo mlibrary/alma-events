@@ -8,18 +8,15 @@ on:
         required: true
 
 env:
-  IMAGE_NAME: alma-webhook
-  NAMESPACE_TOKEN: ${{ secrets.HATCHER_PRODUCTION_TOKEN }}
-  NAMESPACE: alma-utilities
+  environment: production
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     steps:
     - name: Clone latest repository
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
     - name: Check that the tag exists in repo
       id: tag_check
       run: |
@@ -41,7 +38,7 @@ jobs:
     - name: Check that the tag exists in container registry
       id: image_check
       run: |
-        if docker manifest inspect ghcr.io/mlibrary/${{ env.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }} > /dev/null; then
+        if docker manifest inspect ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }} > /dev/null; then
           echo '::set-output name=image_exists::true'
           echo "image exists!"
         else
@@ -58,13 +55,13 @@ jobs:
       with:
         context: .
         push: true
-        tags: ghcr.io/mlibrary/${{ env.IMAGE_NAME }}:${{steps.tag_check.outputs.tag}}
-    - name: Deploy to ${{ env.NAMESPACE }}
-      uses: ./.github/actions/deploy-to-hatcher
+        tags: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{steps.tag_check.outputs.tag}}
+    - name: Deploy to ${{ env.environment }}
+      uses: ./.github/actions/deploy-to-kubernetes
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ env.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }}
+        image: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }}
         cluster_ca: ${{ secrets.HATCHER_CLUSTER_CA }}
-        namespace_token: ${{ env.NAMESPACE_TOKEN }}
-        namespace: ${{ env.NAMESPACE }}
+        namespace_token: ${{ secrets.HATCHER_TOKEN }}
+        namespace: ${{ secrets.NAMESPACE }}

@@ -7,13 +7,9 @@ on:
         description: tag
         required: true
 
-#environment:
-  #name: testing
 
 env:
   environment: testing
-  #NAMESPACE_TOKEN: ${{ secrets.HATCHER_TESTING_TOKEN }}
-  #NAMESPACE: alma-utilities-testing
 
 jobs:
   deploy:
