@@ -17,6 +17,8 @@ jobs:
     steps:
     - name: Clone latest repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: echo tags
       run: git tag
     - name: Check that the tag exists in repo
