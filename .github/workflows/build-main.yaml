@@ -30,7 +30,7 @@ jobs:
            ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:latest
            ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
     - name: Deploy to testing
-      uses: ./.github/actions/deploy-to-kubernetes
+      uses: mlibrary/deploy-to-kubernetes@v1
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
