@@ -4,3 +4,10 @@ coverage
 .gems
 .bundle
 .env
+.ssh/*
+!.ssh/README.md
+sftp/ssh/*
+!sftp/ssh/README.md
+.bash_history
+.irb_history
+.local/*

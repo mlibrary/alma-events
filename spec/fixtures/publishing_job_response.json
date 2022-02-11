@@ -1,0 +1,106 @@
+{
+    "action": "JOB_END",
+    "bib": null,
+    "event": null,
+    "holding": null,
+    "id": "16501890430006381",
+    "institution": {
+        "desc": "University of Michigan",
+        "value": "01UMICH_INST"
+    },
+    "item": null,
+    "job_instance": {
+        "alert": [
+            {
+                "desc": "The job completed successfully. For more information view the report details.",
+                "value": "alert_general_success"
+            }
+        ],
+        "counter": [
+            {
+                "type": {
+                    "desc": "New Records",
+                    "value": "label.new.records"
+                },
+                "value": "2"
+            },
+            {
+                "type": {
+                    "desc": "Updated Records",
+                    "value": "label.updated.records"
+                },
+                "value": "0"
+            },
+            {
+                "type": {
+                    "desc": "Deleted Records",
+                    "value": "label.deleted.records"
+                },
+                "value": "0"
+            },
+            {
+                "type": {
+                    "desc": "Unpublished failed records",
+                    "value": "c.jobs.publishing.failed.publishing"
+                },
+                "value": "0"
+            },
+            {
+                "type": {
+                    "desc": "Skipped records (update date changed but no data change)",
+                    "value": "c.jobs.publishing.skipped"
+                },
+                "value": "0"
+            },
+            {
+                "type": {
+                    "desc": "Filtered records (not published due to filter)",
+                    "value": "c.jobs.publishing.filtered_out"
+                },
+                "value": "0"
+            },
+            {
+                "type": {
+                    "desc": "Total records written to file",
+                    "value": "c.jobs.publishing.totalRecordsWrittenToFile"
+                },
+                "value": "0"
+            }
+        ],
+        "end_time": "2022-01-06T22:13:07.434Z",
+        "external_id": "16501890440006381",
+        "id": "16501890430006381",
+        "job_info": {
+            "category": {
+                "desc": "Publishing",
+                "value": "PUBLISHING"
+            },
+            "description": "Publishing Platform Job",
+            "id": "S16359061320006381",
+            "link": "/almaws/v1/conf/jobs/S16359061320006381",
+            "name": "Publishing Platform Job Search publish",
+            "type": {
+                "desc": "Scheduled",
+                "value": "SCHEDULED"
+            }
+        },
+        "link": "/almaws/v1/conf/jobs/M0/instances/16501890430006381",
+        "name": "Publishing Platform Job Search publish",
+        "progress": 100,
+        "start_time": "2022-01-06T22:13:05.703Z",
+        "status": {
+            "desc": "Completed Successfully",
+            "value": "COMPLETED_SUCCESS"
+        },
+        "status_date": "2022-01-06Z",
+        "submit_time": "2022-01-06T22:13:05.686Z",
+        "submitted_by": {
+            "desc": "Rio, Monique",
+            "value": "mrio"
+        }
+    },
+    "portfolio": null,
+    "representation": null,
+    "time": "2022-01-06T22:13:07.434Z"
+}
+

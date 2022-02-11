@@ -3,13 +3,42 @@ version: '3'
 services:
   web:
     build: .
+    depends_on:
+      - 'redis'
     ports:
       - "4567:4567"
+    environment:
+      - REDIS_URL=redis://redis:6379
     env_file:
       - .env
     volumes:
       - .:/app
       - gem_cache:/gems
 
+  worker:
+    build: ./worker/.
+    depends_on:
+      - 'redis'
+    environment:
+      - REDIS_URL=redis://redis:6379
+
+  redis:
+    image: 'redis:6.2'
+    command: redis-server
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis:/data'
+
+  sftp:
+    image: 'atmoz/sftp'
+    volumes:
+      - ./sftp/bib_search:/home/alma/bib_search
+      - ./sftp/ssh/id_rsa.pub:/home/alma/.ssh/keys/id_rsa.pub:ro
+      - ./sftp/ssh/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./sftp/ssh/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+    command: alma:1001
+
 volumes:
   gem_cache:
+  redis:
