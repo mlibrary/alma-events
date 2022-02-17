@@ -1,4 +1,3 @@
-require 'sidekiq'
 class IndexingJobsGenerator
   def self.match?(data)
     data["action"] == "JOB_END" && data["job_instance"]["name"] == "Publishing Platform Job Search publish" && data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
