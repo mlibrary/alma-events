@@ -37,8 +37,8 @@ end
 
 class SFTP
   def initialize
-    @user = 'alma'
-    @host = 'sftp'
+    @user = ENV.fetch('ALMA_FILES_USER')
+    @host = ENV.fetch('ALMA_FILES_HOST')
   end
   #returns an array of items in a directory
   def ls(path="")
