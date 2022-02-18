@@ -1,6 +1,6 @@
 class IndexingJobsGenerator
   def self.match?(data)
-    data["action"] == "JOB_END" && data["job_instance"]["name"] == "Publishing Platform Job Search publish" && data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
+    data["action"] == "JOB_END" && data["job_instance"]["name"] == ENV.fetch('CATALOG_INDEXING_ALMA_JOB_NAME') && data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
   end
   attr_reader :files
   def initialize(data, sftp = SFTP.new)
@@ -29,7 +29,7 @@ class IndexingJobsGenerator
   end
   private
   def files
-    @sftp.ls("bib_search").filter do |file|
+    @sftp.ls(ENV.fetch("CATALOG_INDEXING_DIRECTORY")).filter do |file|
       file.match?(/#{@data["id"]}/)
     end
   end

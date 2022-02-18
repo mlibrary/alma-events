@@ -9,6 +9,8 @@ services:
       - "4567:4567"
     environment:
       - REDIS_URL=redis://redis:6379
+      - CATALOG_INDEXING_DIRECTORY=bib_search
+      - CATALOG_INDEXING_ALMA_JOB_NAME=Publishing Platform Job Search publish
     env_file:
       - .env
     volumes:
