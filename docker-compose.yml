@@ -16,6 +16,8 @@ services:
 
   worker:
     build: ./worker/.
+    volumes:
+      - ./worker/.:/app
     depends_on:
       - 'redis'
     environment:

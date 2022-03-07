@@ -13,7 +13,7 @@ class IndexingJobsGenerator
       Sidekiq::Client.push_bulk('class' => 'IndexIt', 'args' => new_files.map{|x| [x]})
     end
     if delete_files.count > 0
-      Sidekiq::Client.push_bulk('class' => 'RemoveIt', 'args' => delete_files.map{|x| [x]})
+      Sidekiq::Client.push_bulk('class' => 'DeleteIt', 'args' => delete_files.map{|x| [x]})
     end
   end
 
