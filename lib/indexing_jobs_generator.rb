@@ -1,3 +1,7 @@
+require 'net/sftp'
+require 'ed25519'
+require 'bcrypt_pbkdf'
+require 'byebug'
 class IndexingJobsGenerator
   def self.match?(data)
     data["action"] == "JOB_END" && data["job_instance"]["name"] == ENV.fetch('CATALOG_INDEXING_ALMA_JOB_NAME') && data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
@@ -42,12 +46,10 @@ class SFTP
     @user = ENV.fetch('ALMA_FILES_USER')
     @host = ENV.fetch('ALMA_FILES_HOST')
     @key = ENV.fetch('SSH_KEY_PATH')
+    @sftp = Net::SFTP.start(@host, @user, key_data: [], keys: @key, keys_only: true)
   end
   #returns an array of items in a directory
-  def ls(path="")
-    array = ["sftp", "-oIdentityFile=#{@key}", "-b", "-",  "#{@user}@#{@host}", 
-      "<<<", "$'@ls #{path}'"]
-    command = array.join(" ")
-    `bash -c \"#{command}\"`.split("\n").map{|x| x.strip}
+  def ls(path=".")
+    @sftp.dir.glob(path, "**").filter_map{|x| "#{path}/#{x.name}"}
   end
 end
