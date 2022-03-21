@@ -3,6 +3,7 @@ describe IndexingJobsGenerator do
   before(:each) do
     @data = JSON.parse(fixture("publishing_job_response.json"))
     @sftp_double = instance_double(SFTP,ls: '')
+    @logger_double = instance_double(Logger, info: nil)
   end
   context ".match?" do
     it "matches the correct job" do
@@ -14,7 +15,7 @@ describe IndexingJobsGenerator do
     end
   end
   subject do
-    described_class.new(@data, @sftp_double)
+    described_class.new(@data, @sftp_double, @logger_double)
   end
   context "new_files" do
     it "matches appropriate file names" do

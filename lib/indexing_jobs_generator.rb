@@ -3,12 +3,14 @@ class IndexingJobsGenerator
     data["action"] == "JOB_END" && data["job_instance"]["name"] == ENV.fetch('CATALOG_INDEXING_ALMA_JOB_NAME') && data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
   end
   attr_reader :files
-  def initialize(data, sftp = SFTP.new)
+  def initialize(data, sftp = SFTP.new, logger = Logger.new(STDOUT))
     @data = data
     @sftp = sftp
     @files = files
+    @logger = logger
   end
   def run
+    @logger.info("#{new_files.count} new files; #{delete_files.count} delete files")
     if new_files.count > 0
       Sidekiq::Client.push_bulk('class' => 'IndexIt', 'args' => new_files.map{|x| [x]})
     end
