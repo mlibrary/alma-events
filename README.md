@@ -38,7 +38,7 @@ docker-compose run --rm web bundle exec rspec
 ```
 
 ## Trying out message queue
-When in development mode and while the app is `up` one can send a message directly to the message queue by doing the following:
+While in development mode and while the app is `up` one can send a message directly to the message queue by doing the following:
 ```
 docker-compose exec web curl -X POST --data-binary "@PATH_TO_YOUR_MESSAGE_JSON" localhost:4567/send-dev-webhook-message
 ```
