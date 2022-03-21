@@ -3,8 +3,9 @@ require 'json'
 require 'sidekiq'
 
 require './lib/message_validator'
-require './lib/indexing_jobs_generator.rb'
-require './lib/message_router.rb'
+require './lib/sftp'
+require './lib/indexing_jobs_generator'
+require './lib/message_router'
 
 get '/' do
   content_type :json

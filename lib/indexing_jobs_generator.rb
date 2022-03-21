@@ -1,7 +1,3 @@
-require 'net/sftp'
-require 'ed25519'
-require 'bcrypt_pbkdf'
-require 'byebug'
 class IndexingJobsGenerator
   def self.match?(data)
     data["action"] == "JOB_END" && data["job_instance"]["name"] == ENV.fetch('CATALOG_INDEXING_ALMA_JOB_NAME') && data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
@@ -38,18 +34,5 @@ class IndexingJobsGenerator
     @sftp.ls(ENV.fetch("CATALOG_INDEXING_DIRECTORY")).filter do |file|
       file.match?(/#{@data["id"]}/)
     end
-  end
-end
-
-class SFTP
-  def initialize
-    @user = ENV.fetch('ALMA_FILES_USER')
-    @host = ENV.fetch('ALMA_FILES_HOST')
-    @key = ENV.fetch('SSH_KEY_PATH')
-    @sftp = Net::SFTP.start(@host, @user, key_data: [], keys: @key, keys_only: true)
-  end
-  #returns an array of items in a directory
-  def ls(path=".")
-    @sftp.dir.glob(path, "**").filter_map{|x| "#{path}/#{x.name}"}
   end
 end
