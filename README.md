@@ -11,37 +11,37 @@ git clone git@github.com:mlibrary/alma_webhook.git
 cd alma_webhook
 ```
 
-copy .env-example to .env
-
-```
-cp .env-example .env
-```
-
-edit .env with the following environment variables. 
-
-```ruby
-#.env/development/web
-ALMA_WEBHOOK_SECRET='YOURWEBHOOKSECRET'
-```
-
 build web container
-
 ```
 docker-compose build web
 ```
 
-bundle install
+bundle install gems to a docker volume
 ```
 docker-compose run --rm web bundle install
 ```
+generate ssh-keys
+```
+./set_up_development_ssh_keys
+```
 
 start containers
-
 ```
 docker-compose up -d
 ```
 
 In a browser, go to http://localhost:4567 to see the website.
+
+## Running tests
+```
+docker-compose run --rm web bundle exec rspec
+```
+
+## Trying out message queue
+When in development mode and while the app is `up` one can send a message directly to the message queue by doing the following:
+```
+docker-compose exec web curl -X POST --data-binary "@PATH_TO_YOUR_MESSAGE_JSON" localhost:4567/send-dev-webhook-message
+```
 
 # Kubernetes Configuration
 The Kubernetes deployment configuration lives in [alma-utilities-kube](https://github.com/mlibrary/alma-utilities-kube)
