@@ -1,5 +1,5 @@
 require_relative "../spec_helper"
-describe IndexingJobsGenerator do
+describe ReindexJobsGenerator do
   before(:each) do
     @data = JSON.parse(fixture("publishing_job_response.json"))
     @sftp_double = instance_double(SFTP,ls: '')
@@ -15,18 +15,19 @@ describe IndexingJobsGenerator do
     end
   end
   subject do
-    described_class.new(@data, @sftp_double, @logger_double)
+    described_class.new(data: @data, sftp: @sftp_double, logger: @logger_double)
   end
+  
   context "new_files" do
     it "matches appropriate file names" do
       allow(@sftp_double).to receive(:ls).and_return(["bib_search_2022021017_16501890430006381_new.tar.gz","bib_search_2022021017_16501890430006381_delete.tar.gz","just wrong file name"])
-      expect(subject.new_files).to eq(["bib_search_2022021017_16501890430006381_new.tar.gz"])
+      expect(subject.new_files.map{|x| x.to_s}).to eq(["bib_search_2022021017_16501890430006381_new.tar.gz"])
     end
   end
   context "delete_files" do
     it "matches appropriate file names" do
       allow(@sftp_double).to receive(:ls).and_return(["bib_search_2022021017_16501890430006381_new.tar.gz","bib_search_2022021017_16501890430006381_delete.tar.gz","just wrong file name"])
-      expect(subject.delete_files).to eq(["bib_search_2022021017_16501890430006381_delete.tar.gz"])
+      expect(subject.delete_files.map{|x| x.to_s}).to eq(["bib_search_2022021017_16501890430006381_delete.tar.gz"])
     end
   end
 
