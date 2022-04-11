@@ -4,11 +4,10 @@ class IndexingJobsGenerator
       data["job_instance"]["name"] == job_name &&
       data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
   end
-  attr_reader :files
-  def initialize(data:, sftp: SFTP.new, logger: Logger.new(STDOUT))
+
+  def initialize(data:, sftp: SFTP.new, logger: Logger.new($stdout))
     @data = data
     @sftp = sftp
-    @files = files
     @logger = logger
   end
 
@@ -23,21 +22,19 @@ class IndexingJobsGenerator
   end
 
   def new_files
-    @files.filter do |file|
+    files.filter do |file|
       file.to_s.match?(/_new\.tar/)
     end
   end
 
   def delete_files
-    @files.filter do |file|
+    files.filter do |file|
       file.to_s.match?(/_delete\.tar/)
     end
   end
 
-  private
-
   def files
-    @sftp.ls(alma_output_directory).filter_map do |file|
+    @files ||= @sftp.ls(alma_output_directory).filter_map do |file|
       IndexingFile.for(file) if file.match?(/#{@data["id"]}/)
     end
   end

@@ -2,7 +2,7 @@ class MessageRouter
   def self.route(body, logger)
     begin
       parsed_body = JSON.parse(body)
-    rescue => e
+    rescue
       logger.error("Invalid body: #{body}")
       parsed_body = []
     end
