@@ -17,5 +17,4 @@ describe ReindexJobsGenerator do
   subject do
     described_class.new(data: @data, sftp: @sftp_double, logger: @logger_double)
   end
-
 end

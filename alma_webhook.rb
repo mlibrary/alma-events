@@ -21,12 +21,11 @@ post "/" do
     logger.info body
     MessageRouter.route(body, logger)
     response.status = 200
-    response.body = {}
   else
     response.status = 400
     logger.error "invalid message"
-    response.body = {}
   end
+  response.body = {}
 end
 
 post "/send-dev-webhook-message" do
@@ -35,11 +34,9 @@ post "/send-dev-webhook-message" do
     logger.info("sent development mode webhook message with body: #{body}")
     MessageRouter.route(body, logger)
     response.status = 200
-    response.body = {}
-
   else
     logger.error("Not in development mode")
     response.status = 500
-    response.body = {}
   end
+  response.body = {}
 end

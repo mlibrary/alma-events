@@ -12,10 +12,3 @@ class DeleteIt
     puts "#{file} DeleteIt at #{solr_url}"
   end
 end
-
-class CatchupSince
-  include Sidekiq::Job
-  def perform(date, solr_url)
-    puts "CatchupSince #{date} at #{solr_url}"
-  end
-end
