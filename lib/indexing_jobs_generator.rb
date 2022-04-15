@@ -1,14 +1,3 @@
-class ReindexJobsCallback
-  def on_complete(status, options)
-    puts "did it complete?"
-    Logger.new($stdout).info ("did it complete?")
-  end
-  def on_success(status, options)
-    puts "did it succeed?"
-    Logger.new($stdout).info ("did it succeed?")
-    Sidekiq::Client.push("class" => "CatchupSince","args" => [options["date"], ENV.fetch("REINDEX_SOLR_URL")] )
-  end
-end
 class IndexingJobsGenerator
   def self.match?(data)
     data["action"] == "JOB_END" &&
@@ -46,7 +35,6 @@ class ReindexJobsGenerator < IndexingJobsGenerator
     actions.each do |action|
       @logger.info action.summary
     end
-
     actions.each do |action|
       @push_indexing_jobs.call(job_name: action.job_name, files: action.files, solr_url: ENV.fetch("REINDEX_SOLR_URL"))
     end
@@ -60,5 +48,3 @@ class ReindexJobsGenerator < IndexingJobsGenerator
     ENV.fetch("FULL_ALMA_FILES_PATH")
   end
 end
-
-

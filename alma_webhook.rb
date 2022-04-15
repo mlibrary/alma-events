@@ -1,6 +1,7 @@
 require "sinatra"
 require "json"
 require "sidekiq"
+require "byebug" if settings.environment == :development
 
 require "./lib/message_validator"
 require "./lib/sftp"
@@ -18,11 +19,13 @@ post "/" do
   body = request.body.read
   if MessageValidator.valid?(body, signature)
     logger.info body
-    response.status = 200
     MessageRouter.route(body, logger)
+    response.status = 200
+    response.body = {}
   else
     response.status = 400
     logger.error "invalid message"
+    response.body = {}
   end
 end
 
@@ -31,8 +34,12 @@ post "/send-dev-webhook-message" do
     body = request.body.read
     logger.info("sent development mode webhook message with body: #{body}")
     MessageRouter.route(body, logger)
+    response.status = 200
+    response.body = {}
+
   else
     logger.error("Not in development mode")
     response.status = 500
+    response.body = {}
   end
 end
