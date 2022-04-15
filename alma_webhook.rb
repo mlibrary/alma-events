@@ -4,7 +4,7 @@ require "sidekiq"
 
 require "./lib/message_validator"
 require "./lib/sftp"
-require "./lib/indexing_file"
+require "./lib/indexing_action"
 require "./lib/indexing_jobs_generator"
 require "./lib/message_router"
 

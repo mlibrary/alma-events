@@ -1,53 +1,64 @@
+class ReindexJobsCallback
+  def on_complete(status, options)
+    puts "did it complete?"
+    Logger.new($stdout).info ("did it complete?")
+  end
+  def on_success(status, options)
+    puts "did it succeed?"
+    Logger.new($stdout).info ("did it succeed?")
+    Sidekiq::Client.push("class" => "CatchupSince","args" => [options["date"], ENV.fetch("REINDEX_SOLR_URL")] )
+  end
+end
 class IndexingJobsGenerator
   def self.match?(data)
     data["action"] == "JOB_END" &&
-      data["job_instance"]["name"] == job_name &&
+      data["job_instance"]["name"] == alma_job_name &&
       data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
   end
 
-  def initialize(data:, sftp: SFTP.new, logger: Logger.new($stdout))
+  def initialize(data:, sftp: SFTP.new, logger: Logger.new($stdout), 
+                 push_indexing_jobs: lambda do |job_name:,files:,solr_url:|  
+                   Sidekiq::Client.push_bulk("class" => job_name,"args" => files.map { |x| [x, solr_url] })
+                  end
+                )
     @data = data
     @sftp = sftp
     @logger = logger
+    @push_indexing_jobs = push_indexing_jobs
   end
 
-  def run
-    @logger.info("#{new_files.count} new files; #{delete_files.count} delete files")
-    if new_files.any?
-      Sidekiq::Client.push_bulk("class" => "IndexIt", "args" => new_files.map { |x| [x.to_s] })
-    end
-    if delete_files.any?
-      Sidekiq::Client.push_bulk("class" => "DeleteIt", "args" => delete_files.map { |x| [x.to_s] })
-    end
+  def actions 
+    @actions ||= IndexingActions.new(files)
   end
-
-  def new_files
-    files.filter do |file|
-      file.to_s.match?(/_new\.tar/)
-    end
-  end
-
-  def delete_files
-    files.filter do |file|
-      file.to_s.match?(/_delete\.tar/)
-    end
-  end
-
   def files
-    @files ||= @sftp.ls(alma_output_directory).filter_map do |file|
-      IndexingFile.for(file) if file.match?(/#{@data["id"]}/)
+    @files ||= @sftp.ls(alma_output_directory).filter do |file|
+      file.match?(/#{@data["id"]}/)
     end
   end
 end
 
 class ReindexJobsGenerator < IndexingJobsGenerator
-  def self.job_name
-    ENV.fetch("CATALOG_INDEXING_ALMA_JOB_NAME")
+  def self.alma_job_name
+    ENV.fetch("FULL_CATALOG_REINDEX_ALMA_JOB_NAME")
+  end
+
+  def run
+    actions.each do |action|
+      @logger.info action.summary
+    end
+
+    actions.each do |action|
+      @push_indexing_jobs.call(job_name: action.job_name, files: action.files, solr_url: ENV.fetch("REINDEX_SOLR_URL"))
+    end
   end
 
   private
-
+  def date
+    Date.parse(@data["time"]).strftime("%Y%d%m")
+  end
   def alma_output_directory
-    ENV.fetch("CATALOG_INDEXING_DIRECTORY")
+    ENV.fetch("FULL_ALMA_FILES_PATH")
   end
 end
+
+
