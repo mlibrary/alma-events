@@ -1,4 +1,7 @@
-FROM ruby:3.1
+ARG RUBY_VERSION=3.1
+FROM ruby:${RUBY_VERSION}
+
+ARG BUNDLER_VERSION=2.3
 ARG UNAME=app
 ARG UID=1000
 ARG GID=1000
@@ -10,8 +13,7 @@ RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends \
   vim-tiny \
   ssh
 
-RUN gem install bundler:2.3
-
+RUN gem install bundler:${BUNDLER_VERSION}
 
 RUN groupadd -g ${GID} -o ${UNAME}
 RUN useradd -m -d /app -u ${UID} -g ${GID} -o -s /bin/bash ${UNAME}

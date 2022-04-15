@@ -11,3 +11,4 @@ sftp/ssh/*
 .bash_history
 .irb_history
 .local/*
+.cache/
