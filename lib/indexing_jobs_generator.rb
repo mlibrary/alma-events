@@ -1,15 +1,17 @@
 class IndexingJobsGenerator
+  attr_reader :job_id
   def self.match?(data)
     data["action"] == "JOB_END" &&
       data["job_instance"]["name"] == alma_job_name &&
       data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
   end
 
-  def initialize(data:, sftp: SFTP.new, logger: Logger.new($stdout),
+  def initialize(data: nil, job_id: nil, sftp: SFTP.new, logger: Logger.new($stdout),
     push_indexing_jobs: lambda do |job_name:, files:, solr_url:|
                           Sidekiq::Client.push_bulk("class" => job_name, "args" => files.map { |x| [x, solr_url] })
                         end)
-    @data = data
+    @job_id = data&.dig("id") || job_id
+    raise ArgumentError, "missing keyword: :data or :job_id" if @job_id.nil?
     @sftp = sftp
     @logger = logger
     @push_indexing_jobs = push_indexing_jobs
@@ -21,7 +23,7 @@ class IndexingJobsGenerator
 
   def files
     @files ||= @sftp.ls(alma_output_directory).filter do |file|
-      file.match?(/#{@data["id"]}/)
+      file.match?(/#{@job_id}/)
     end
   end
 end
@@ -41,10 +43,6 @@ class ReindexJobsGenerator < IndexingJobsGenerator
   end
 
   private
-
-  def date
-    Date.parse(@data["time"]).strftime("%Y%d%m")
-  end
 
   def alma_output_directory
     ENV.fetch("FULL_ALMA_FILES_PATH")

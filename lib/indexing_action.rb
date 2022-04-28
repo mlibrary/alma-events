@@ -26,7 +26,7 @@ class IndexingAction
   end
 
   def summary
-    "#{@files.count} files for #{job_name} job"
+    "#{@files.count} file(s) for #{job_name} job"
   end
 end
 
