@@ -9,6 +9,9 @@ class MessageRouter
     if ReindexJobsGenerator.match?(parsed_body) && ENV.fetch("REINDEX_ON") == "true"
       logger.info("Matched Reindex Jobs Generator")
       ReindexJobsGenerator.new(data: parsed_body).run
+    elsif DailyIndexingJobsGenerator.match?(parsed_body) && ENV.fetch("DAILY_INDEX_ON") == "true"
+      logger.info("Daily Indexing Jobs Generator")
+      DailyIndexingJobsGenerator.new(data: parsed_body).run
     else
       logger.info("Did not match anything")
     end

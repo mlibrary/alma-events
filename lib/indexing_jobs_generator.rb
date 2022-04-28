@@ -48,3 +48,25 @@ class ReindexJobsGenerator < IndexingJobsGenerator
     ENV.fetch("FULL_ALMA_FILES_PATH")
   end
 end
+
+class DailyIndexingJobsGenerator < IndexingJobsGenerator
+  def self.alma_job_name
+    ENV.fetch("DAILY_CATALOG_INDEX_ALMA_JOB_NAME")
+  end
+
+  def run
+    actions.each do |action|
+      @logger.info action.summary
+    end
+    actions.each do |action|
+      @push_indexing_jobs.call(job_name: action.job_name, files: action.files, solr_url: ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
+      @push_indexing_jobs.call(job_name: action.job_name, files: action.files, solr_url: ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+    end
+  end
+
+  private
+
+  def alma_output_directory
+    ENV.fetch("DAILY_ALMA_FILES_PATH")
+  end
+end

@@ -69,3 +69,47 @@ describe ReindexJobsGenerator do
     end
   end
 end
+describe DailyIndexingJobsGenerator do
+  before(:each) do
+    @data = JSON.parse(fixture("publishing_job_response.json"))
+    @data["job_instance"]["name"] = ENV.fetch("DAILY_CATALOG_INDEX_ALMA_JOB_NAME")
+    @job_id_from_data = @data["id"]
+    @files = [
+      "file_#{@job_id_from_data}_new.tar.gz",
+      "file_#{@job_id_from_data}_delete.tar.gz",
+      "file_new.tar.gz"
+    ]
+    @sftp_double = instance_double(SFTP, ls: @files)
+    @logger_double = instance_double(Logger, info: nil)
+    @push_bulk_double = double("SidekiqClient", push_bulk: nil)
+    @push_indexing_jobs = lambda do |job_name:, files:, solr_url:|
+      @push_bulk_double.push_bulk(job_name, files, solr_url)
+    end
+  end
+  context ".match?" do
+    it "matches the correct job" do
+      expect(described_class.match?(@data)).to eq(true)
+    end
+    it "does not match when it should not match" do
+      @data["job_instance"]["name"] = "Not the correct job name"
+      expect(described_class.match?(@data)).to eq(false)
+    end
+  end
+  subject do
+    described_class.new(data: @data, sftp: @sftp_double, logger: @logger_double, push_indexing_jobs: @push_indexing_jobs)
+  end
+  context "run" do
+    it "logs actions summary" do
+      expect(@logger_double).to receive(:info).with("1 file(s) for IndexIt job")
+      expect(@logger_double).to receive(:info).with("1 file(s) for DeleteIt job")
+      subject.run
+    end
+    it "sends the correct arguments to push_indexing_jobs" do
+      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
+      subject.run
+    end
+  end
+end
