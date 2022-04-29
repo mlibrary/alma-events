@@ -36,7 +36,7 @@ class IndexingNewAction < IndexingAction
   end
 
   def file_name_pattern
-    /_new\.tar/
+    /_new_?\d*\.tar/
   end
 end
 
@@ -46,6 +46,6 @@ class IndexingDeleteAction < IndexingAction
   end
 
   def file_name_pattern
-    /_delete\.tar/
+    /_delete_?\d*\.tar/
   end
 end

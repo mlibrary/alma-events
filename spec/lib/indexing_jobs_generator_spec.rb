@@ -6,6 +6,8 @@ describe ReindexJobsGenerator do
     @files = [
       "file_#{@job_id_from_data}_new.tar.gz",
       "file_#{@job_id_from_data}_delete.tar.gz",
+      "file_#{@job_id_from_data}_new_22.tar.gz",
+      "file_#{@job_id_from_data}_delete_1.tar.gz",
       "file_new.tar.gz"
     ]
     @sftp_double = instance_double(SFTP, ls: @files)
@@ -58,13 +60,13 @@ describe ReindexJobsGenerator do
   end
   context "run" do
     it "logs actions summary" do
-      expect(@logger_double).to receive(:info).with("1 file(s) for IndexIt job")
-      expect(@logger_double).to receive(:info).with("1 file(s) for DeleteIt job")
+      expect(@logger_double).to receive(:info).with("2 file(s) for IndexIt job")
+      expect(@logger_double).to receive(:info).with("2 file(s) for DeleteIt job")
       subject.run
     end
     it "sends the correct arguments to push_indexing_jobs" do
-      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0]], ENV.fetch("REINDEX_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1]], ENV.fetch("REINDEX_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0], @files[2]], ENV.fetch("REINDEX_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1], @files[3]], ENV.fetch("REINDEX_SOLR_URL"))
       subject.run
     end
   end
