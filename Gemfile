@@ -7,7 +7,7 @@ gem "sidekiq"
 
 source "https://rubygems.pkg.github.com/mlibrary" do
   gem "sftp", "0.1.0"
-end 
+end
 
 group :development, :test do
   gem "pry"

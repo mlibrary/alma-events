@@ -10,7 +10,7 @@ describe ReindexJobsGenerator do
       "file_#{@job_id_from_data}_delete_1.tar.gz",
       "file_new.tar.gz"
     ]
-    @sftp_double = instance_double(SFTP, ls: @files)
+    @sftp_double = instance_double(SFTP::Client, ls: @files)
     @logger_double = instance_double(Logger, info: nil)
     @push_bulk_double = double("SidekiqClient", push_bulk: nil)
     @push_indexing_jobs = lambda do |job_name:, files:, solr_url:|
@@ -81,7 +81,7 @@ describe DailyIndexingJobsGenerator do
       "file_#{@job_id_from_data}_delete.tar.gz",
       "file_new.tar.gz"
     ]
-    @sftp_double = instance_double(SFTP, ls: @files)
+    @sftp_double = instance_double(SFTP::Client, ls: @files)
     @logger_double = instance_double(Logger, info: nil)
     @push_bulk_double = double("SidekiqClient", push_bulk: nil)
     @push_indexing_jobs = lambda do |job_name:, files:, solr_url:|
