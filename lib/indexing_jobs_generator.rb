@@ -6,7 +6,7 @@ class IndexingJobsGenerator
       data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
   end
 
-  def initialize(data: nil, job_id: nil, sftp: SFTP.new, logger: Logger.new($stdout),
+  def initialize(data: nil, job_id: nil, sftp: SFTP.client, logger: Logger.new($stdout),
     push_indexing_jobs: lambda do |job_name:, files:, solr_url:|
                           Sidekiq::Client.push_bulk("class" => job_name, "args" => files.map { |x| [x, solr_url] })
                         end)

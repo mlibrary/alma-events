@@ -98,6 +98,11 @@ GEM
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
 
+GEM
+  remote: https://rubygems.pkg.github.com/mlibrary/
+  specs:
+    sftp (0.1.0)
+
 PLATFORMS
   x86_64-linux
 
@@ -107,6 +112,7 @@ DEPENDENCIES
   puma
   rack-test
   rspec
+  sftp (= 0.1.0)!
   sidekiq
   simplecov
   sinatra

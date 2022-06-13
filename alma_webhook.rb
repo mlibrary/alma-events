@@ -1,13 +1,19 @@
 require "sinatra"
 require "json"
 require "sidekiq"
+require "sftp"
 require "byebug" if settings.environment == :development
 
 require "./lib/message_validator"
-require "./lib/sftp"
 require "./lib/indexing_action"
 require "./lib/indexing_jobs_generator"
 require "./lib/message_router"
+
+SFTP.configure do |config|
+  config.user = ENV.fetch("ALMA_FILES_USER")
+  config.host = ENV.fetch("ALMA_FILES_HOST")
+  config.key_path = ENV.fetch("SSH_KEY_PATH")
+end
 
 get "/" do
   content_type :json
