@@ -16,6 +16,13 @@ build web container
 docker-compose build web
 ```
 
+set up your .env file
+```
+cp .env-example .env
+```
+
+Replace the value for `BUNDLE_RUBYGEMS__PKG__GITHUB__COM` in the `.env` file with your [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) that has `read:packages` access. 
+
 bundle install gems to a docker volume
 ```
 docker-compose run --rm web bundle install
