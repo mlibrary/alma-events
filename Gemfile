@@ -6,7 +6,7 @@ gem "puma"
 gem "sidekiq"
 
 source "https://rubygems.pkg.github.com/mlibrary" do
-  gem "sftp", "0.1.0"
+  gem "sftp"
 end
 
 group :development, :test do
