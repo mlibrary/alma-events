@@ -13,8 +13,8 @@ describe ReindexJobsGenerator do
     @sftp_double = instance_double(SFTP::Client, ls: @files)
     @logger_double = instance_double(Logger, info: nil)
     @push_bulk_double = double("SidekiqClient", push_bulk: nil)
-    @push_indexing_jobs = lambda do |job_name:, files:, solr_url:|
-      @push_bulk_double.push_bulk(job_name, files, solr_url)
+    @push_indexing_jobs = lambda do |job_name:, queue:, files:, solr_url:|
+      @push_bulk_double.push_bulk(job_name, queue, files, solr_url)
     end
   end
   context ".match?" do
@@ -65,8 +65,8 @@ describe ReindexJobsGenerator do
       subject.run
     end
     it "sends the correct arguments to push_indexing_jobs" do
-      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0], @files[2]], ENV.fetch("REINDEX_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1], @files[3]], ENV.fetch("REINDEX_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "reindex", [@files[0], @files[2]], ENV.fetch("REINDEX_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "reindex", [@files[1], @files[3]], ENV.fetch("REINDEX_SOLR_URL"))
       subject.run
     end
   end
@@ -84,8 +84,8 @@ describe DailyIndexingJobsGenerator do
     @sftp_double = instance_double(SFTP::Client, ls: @files)
     @logger_double = instance_double(Logger, info: nil)
     @push_bulk_double = double("SidekiqClient", push_bulk: nil)
-    @push_indexing_jobs = lambda do |job_name:, files:, solr_url:|
-      @push_bulk_double.push_bulk(job_name, files, solr_url)
+    @push_indexing_jobs = lambda do |job_name:, queue:, files:, solr_url:|
+      @push_bulk_double.push_bulk(job_name, queue, files, solr_url)
     end
   end
   context ".match?" do
@@ -107,10 +107,10 @@ describe DailyIndexingJobsGenerator do
       subject.run
     end
     it "sends the correct arguments to push_indexing_jobs" do
-      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", [@files[0]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", [@files[1]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
       subject.run
     end
   end
