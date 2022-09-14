@@ -13,6 +13,7 @@ env:
 
 jobs:
   deploy:
+    name: "Deploy ${{ github.events.inputs.tag }} to testing"
     runs-on: ubuntu-latest
     environment: testing
     steps:
@@ -59,14 +60,12 @@ jobs:
         context: .
         file: Dockerfile.prod
         push: true
-        secrets: |
-          "gh_package_read_token=${{ secrets.GH_PACKAGE_READ_TOKEN }}"
         tags: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{steps.tag_check.outputs.tag}}
     - name: Deploy to ${{ env.environment }}
       uses: mlibrary/deploy-to-kubernetes@v2
       with:
         registry_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ github.sha }}
+        image: ghcr.io/mlibrary/${{ secrets.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }}
         cluster_ca: ${{ secrets.HATCHER_CLUSTER_CA }}
         cluster_server: https://hatcher.kubernetes.lib.umich.edu
         namespace_token: ${{ secrets.HATCHER_TOKEN }}
