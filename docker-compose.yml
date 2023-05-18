@@ -3,6 +3,8 @@ version: '3'
 services:
   web:
     build: .
+    stdin_open: true
+    tty: true
     depends_on:
       - 'redis'
     ports:
@@ -14,6 +16,13 @@ services:
       - .:/app
       - ./sftp/ssh/ssh_client_rsa_key:/etc/secret-volume/id_rsa:ro
       - gem_cache:/gems
+
+  monitor:
+    image: "mockserver/mockserver"
+    ports: 
+      - "1080:1080"
+    environment:
+      - SERVER_PORT=1080
 
   worker:
     build: ./worker/.

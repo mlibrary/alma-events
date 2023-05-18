@@ -2,12 +2,20 @@ require "sinatra"
 require "json"
 require "sidekiq"
 require "sftp"
+require "faraday"
 require "byebug" if settings.environment == :development
 
 require "./lib/message_validator"
 require "./lib/indexing_action"
 require "./lib/indexing_jobs_generator"
 require "./lib/message_router"
+require "./lib/sidekiq_middleware"
+
+Sidekiq.configure_client do |config|
+  config.client_middleware do |chain|
+    chain.add JobQueued
+  end
+end
 
 SFTP.configure do |config|
   config.user = ENV.fetch("ALMA_FILES_USER")
