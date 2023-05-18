@@ -1,8 +1,10 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
-    build: .
+    build: 
+      context: .
+      target: development
     stdin_open: true
     tty: true
     depends_on:

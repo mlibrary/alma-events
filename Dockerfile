@@ -1,14 +1,11 @@
-ARG RUBY_VERSION=3.1
-FROM ruby:${RUBY_VERSION}
+FROM ruby:3.2 AS development
 
 ARG UNAME=app
 ARG UID=1000
 ARG GID=1000
 
-
 #RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends \
   #vim-tiny 
-  #ssh
 
 RUN gem install bundler
 
@@ -24,3 +21,13 @@ ENV BUNDLE_PATH /gems
 WORKDIR /app
 
 CMD ["bundle", "exec", "ruby", "alma_webhook.rb", "-o", "0.0.0.0"]
+
+FROM development AS production
+
+ENV BUNDLE_WITHOUT development:test
+
+COPY --chown=${UID}:${GID} . /app
+
+RUN --mount=type=secret,id=gh_package_read_token \
+  read_token="$(cat /run/secrets/gh_package_read_token)" \
+  && BUNDLE_RUBYGEMS__PKG__GITHUB__COM=${read_token} bundle install
