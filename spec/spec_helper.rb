@@ -115,6 +115,7 @@ end
 def fixture(path)
   File.read("./spec/fixtures/#{path}")
 end
+
 def with_modified_env(options = {}, &block)
   ClimateControl.modify(options, &block)
 end

@@ -111,7 +111,7 @@ describe DailyIndexingJobsGenerator do
       expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
       expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
       expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
-      with_modified_env SOLRCLOUD_ON: 'false' do
+      with_modified_env SOLRCLOUD_ON: "false" do
         subject.run
       end
     end
