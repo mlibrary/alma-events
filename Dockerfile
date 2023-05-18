@@ -28,6 +28,6 @@ ENV BUNDLE_WITHOUT development:test
 
 COPY --chown=${UID}:${GID} . /app
 
-RUN --mount=type=secret,id=gh_package_read_token \
+RUN --mount=type=secret,id=gh_package_read_token,uid=${UID} \
   read_token="$(cat /run/secrets/gh_package_read_token)" \
   && BUNDLE_RUBYGEMS__PKG__GITHUB__COM=${read_token} bundle install
