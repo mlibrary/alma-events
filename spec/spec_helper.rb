@@ -18,6 +18,7 @@ require "rspec"
 require "pry-byebug"
 require "webmock/rspec"
 require "simplecov"
+require "climate_control"
 SimpleCov.start
 ENV["RACK_ENV"] = "test"
 
@@ -113,4 +114,7 @@ RSpec.configure do |config|
 end
 def fixture(path)
   File.read("./spec/fixtures/#{path}")
+end
+def with_modified_env(options = {}, &block)
+  ClimateControl.modify(options, &block)
 end

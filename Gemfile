@@ -19,4 +19,5 @@ group :development, :test do
   gem "webmock"
   gem "simplecov"
   gem "standard"
+  gem "climate_control"
 end

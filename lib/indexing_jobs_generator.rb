@@ -67,8 +67,12 @@ class DailyIndexingJobsGenerator < IndexingJobsGenerator
       @logger.info action.summary
     end
     actions.each do |action|
-      @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
-      @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+      if ENV.fetch("SOLRCLOUD_ON") == "true"
+        @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("LIVE_SOLR_URL"))
+      else
+        @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
+        @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+      end
     end
   end
 
