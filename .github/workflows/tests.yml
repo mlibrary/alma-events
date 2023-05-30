@@ -13,11 +13,11 @@ jobs:
       - name: Create .env file
         run: cat .env-dev-values > .env
       - name: Load .env file
-        uses: xom9ikk/dotenv@v1.0.2
-      - name: Set up Ruby 3.1.0
+        uses: xom9ikk/dotenv@v2
+      - name: Set up Ruby 3.2
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.0
+          ruby-version: 3.2
           bundler-cache: true
         env: 
           BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{secrets.GH_PACKAGE_READ_TOKEN}}

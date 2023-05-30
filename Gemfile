@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gem "sinatra"
 gem "puma"
 gem "sidekiq"
+gem "faraday"
 
 source "https://rubygems.pkg.github.com/mlibrary" do
   gem "sftp"
@@ -18,4 +19,5 @@ group :development, :test do
   gem "webmock"
   gem "simplecov"
   gem "standard"
+  gem "climate_control"
 end
