@@ -13,7 +13,7 @@ require "./lib/sidekiq_middleware"
 
 Sidekiq.configure_client do |config|
   config.client_middleware do |chain|
-    chain.add JobQueued
+    chain.add JobQueued if ENV.fetch("SUPERVISOR_ON") == "true"
   end
 end
 
