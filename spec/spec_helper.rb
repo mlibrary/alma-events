@@ -19,8 +19,11 @@ require "pry-byebug"
 require "webmock/rspec"
 require "simplecov"
 require "climate_control"
+require "sidekiq"
+require "sftp"
 SimpleCov.start
 ENV["RACK_ENV"] = "test"
+ENV["BUNNIES"] = "true"
 
 require File.expand_path "../../alma_webhook.rb", __FILE__
 
