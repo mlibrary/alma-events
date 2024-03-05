@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/mlibrary/sftp.git
+  revision: bf22dd9881f03776a5e5a3c14a77a2028ff374a3
+  specs:
+    sftp (0.3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -117,11 +123,6 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-
-GEM
-  remote: https://rubygems.pkg.github.com/mlibrary/
-  specs:
-    sftp (0.2.1)
 
 PLATFORMS
   x86_64-linux

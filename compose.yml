@@ -1,19 +1,14 @@
-version: '3.8'
-
 services:
   web:
     build: 
       context: .
       target: development
-    stdin_open: true
-    tty: true
     depends_on:
       - 'redis'
     ports:
       - "4567:4567"
     env_file:
-      - .env
-      - .env-dev-values
+      - env.development
     volumes:
       - .:/app
       - ./sftp/ssh/ssh_client_rsa_key:/etc/secret-volume/id_rsa:ro
