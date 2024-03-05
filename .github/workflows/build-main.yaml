@@ -16,24 +16,23 @@ jobs:
       dockerfile: Dockerfile
     secrets: inherit
 
-  deploy-testing:
+  deploy-aim-workshop:
     needs: build-unstable
-    runs-on: ubuntu-latest
-    environment: testing
-    steps:
-    - name: Deploy to legacy testing
-      uses: mlibrary/deploy-to-kubernetes@v3
-      with:
-        registry_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ needs.build-unstable.outputs.image }}
-        cluster_ca: ${{ secrets.HATCHER_CLUSTER_CA }}
-        cluster_server: https://hatcher.kubernetes.lib.umich.edu
-        namespace_token: ${{ secrets.HATCHER_TOKEN }}
-        namespace: ${{ secrets.NAMESPACE }}
+    name: Deploy to AIM workshop
+    environment: aim
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    with:
+      image: ${{ needs.build-unstable.outputs.image }}
+      file: environments/alma-events/workshop/web-image.txt
+      CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
+      CONFIG_REPO_RW_INSTALL_ID: ${{ vars.CONFIG_REPO_RW_INSTALL_ID }}
+      CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
+    secrets: inherit
 
-  deploy-image:
+  deploy-search-workshop:
     needs: build-unstable
-    name: Deploy to workshop
+    name: Deploy to search workshop
+    environment: search
     uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
     with:
       image: ${{ needs.build-unstable.outputs.image }}
