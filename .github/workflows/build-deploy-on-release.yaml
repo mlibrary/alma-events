@@ -19,12 +19,9 @@ jobs:
     name: Deploy to aim production
     uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
     with:
-      environent: aim
+      environment: aim
       image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.inputs.tag }}
       file: environments/alma-events/production/web-image.txt
-      CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
-      CONFIG_REPO_RW_INSTALL_ID: ${{ vars.CONFIG_REPO_RW_INSTALL_ID }}
-      CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
     secrets: inherit
 
   deploy-search-image:
@@ -32,7 +29,7 @@ jobs:
     name: Deploy to search production
     uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
     with:
-      environent: search
+      environment: search
       image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.inputs.tag }}
       file: environments/alma-events/production/web-image.txt
     secrets: inherit
