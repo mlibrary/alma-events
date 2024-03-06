@@ -20,25 +20,19 @@ jobs:
   deploy-aim-image:
     needs: build-unstable
     name: Deploy to aim-workshop
-    environment: aim
     uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
     with:
+      environment: aim
       image: ${{ needs.build-unstable.outputs.image }}
       file: environments/alma-events/workshop/web-image.txt
-      CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
-      CONFIG_REPO_RW_INSTALL_ID: ${{ vars.CONFIG_REPO_RW_INSTALL_ID }}
-      CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
     secrets: inherit
 
   deploy-search-image:
     needs: build-unstable
     name: Deploy to search-workshop
-    environment: search
     uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
     with:
+      environment: search
       image: ${{ needs.build-unstable.outputs.image }}
       file: environments/alma-events/workshop/web-image.txt
-      CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
-      CONFIG_REPO_RW_INSTALL_ID: ${{ vars.CONFIG_REPO_RW_INSTALL_ID }}
-      CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
     secrets: inherit
