@@ -17,25 +17,24 @@ jobs:
       dockerfile: Dockerfile
     secrets: inherit
 
-  deploy-production:
+  deploy-aim-image:
     needs: build-production
-    name: Deploy to legacy production
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-    - name: Deploy to Production
-      uses: mlibrary/deploy-to-kubernetes@v3
-      with:
-        registry_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.inputs.tag }}
-        cluster_ca: ${{ secrets.HATCHER_CLUSTER_CA }}
-        cluster_server: https://hatcher.kubernetes.lib.umich.edu
-        namespace_token: ${{ secrets.HATCHER_TOKEN }}
-        namespace: ${{ secrets.NAMESPACE }}
+    name: Deploy to aim-production
+    environment: aim
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    with:
+      image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.inputs.tag }}
+      file: environments/alma-events/production/web-image.txt
+      CONFIG_REPO_RW_APP_ID: ${{ vars.CONFIG_REPO_RW_APP_ID }}
+      CONFIG_REPO_RW_INSTALL_ID: ${{ vars.CONFIG_REPO_RW_INSTALL_ID }}
+      CONFIG_REPO_FULL_NAME: ${{ vars.CONFIG_REPO_FULL_NAME }}
+    secrets: inherit
 
-  deploy-image:
+
+  deploy-search-image:
     needs: build-production
-    name: Deploy to production
+    name: Deploy to search-production
+    environment: search
     uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
     with:
       image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.inputs.tag }}

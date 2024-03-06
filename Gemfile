@@ -6,9 +6,7 @@ gem "puma"
 gem "sidekiq"
 gem "faraday"
 
-source "https://rubygems.pkg.github.com/mlibrary" do
-  gem "sftp"
-end
+gem "sftp", github: "mlibrary/sftp"
 
 group :development, :test do
   gem "pry"
