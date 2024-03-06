@@ -5,6 +5,7 @@ gem "sinatra"
 gem "puma"
 gem "sidekiq"
 gem "faraday"
+gem "rackup"
 
 gem "sftp", github: "mlibrary/sftp"
 
