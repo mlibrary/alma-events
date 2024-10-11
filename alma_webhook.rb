@@ -5,6 +5,7 @@ require "sftp"
 require "faraday"
 require "byebug" if settings.environment == :development
 
+require "./lib/services"
 require "./lib/message_validator"
 require "./lib/indexing_action"
 require "./lib/indexing_jobs_generator"

@@ -8,6 +8,7 @@ gem "faraday"
 gem "rackup"
 
 gem "sftp", github: "mlibrary/sftp"
+gem "canister"
 
 group :development, :test do
   gem "pry"

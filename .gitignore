@@ -12,3 +12,4 @@ sftp/ssh/*
 .irb_history
 .local/*
 .cache/
+.solargraph.yml
