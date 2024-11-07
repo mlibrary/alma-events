@@ -3,7 +3,7 @@ class IndexingJobsGenerator
   def self.match?(data)
     data["action"] == "JOB_END" &&
       data["job_instance"]["name"] == alma_job_name &&
-      data["job_instance"]["status"]["value"] == "COMPLETED_SUCCESS"
+      ["COMPLETED_SUCCESS", "COMPLETED_FAILED"].include?(data["job_instance"]["status"]["value"])
   end
 
   def initialize(data: nil, job_id: nil, sftp: SFTP.client, logger: Logger.new($stdout),
