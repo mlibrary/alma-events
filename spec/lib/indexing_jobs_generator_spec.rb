@@ -89,7 +89,11 @@ describe DailyIndexingJobsGenerator do
     end
   end
   context ".match?" do
-    it "matches the correct job" do
+    it "matches the correct job and success status" do
+      expect(described_class.match?(@data)).to eq(true)
+    end
+    it "matches the correct job and success with errors status" do
+      @data["job_instance"]["status"]["value"] = "COMPLETED_FAILED"
       expect(described_class.match?(@data)).to eq(true)
     end
     it "does not match when it should not match" do
