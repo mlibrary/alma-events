@@ -10,8 +10,7 @@ gem "rackup"
 gem "sftp", github: "mlibrary/sftp"
 
 group :development, :test do
-  gem "pry"
-  gem "pry-byebug"
+  gem "debug"
   gem "rack-test"
   gem "rspec"
   gem "sinatra-contrib"
