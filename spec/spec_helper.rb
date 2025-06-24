@@ -15,7 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require "rack/test"
 require "rspec"
-require "pry-byebug"
+require "debug"
 require "webmock/rspec"
 require "simplecov"
 require "climate_control"
