@@ -70,8 +70,9 @@ class DailyIndexingJobsGenerator < IndexingJobsGenerator
       if ENV.fetch("SOLRCLOUD_ON") == "true"
         @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("LIVE_SOLR_URL"))
       else
-        @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
-        @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
+        production_solr_urls.each do |solr_url|
+          @push_indexing_jobs.call(job_name: action.job_name, queue: queue, files: action.files, solr_url: solr_url)
+        end
       end
     end
   end
@@ -80,5 +81,9 @@ class DailyIndexingJobsGenerator < IndexingJobsGenerator
 
   def alma_output_directory
     ENV.fetch("DAILY_ALMA_FILES_PATH")
+  end
+
+  def production_solr_urls
+    ENV.fetch("PRODUCTION_SOLR_URLS")&.split(",")
   end
 end

@@ -111,11 +111,13 @@ describe DailyIndexingJobsGenerator do
       subject.run
     end
     it "sends the correct arguments to push_indexing_jobs" do
-      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], ENV.fetch("MACC_PRODUCTION_SOLR_URL"))
-      expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], ENV.fetch("HATCHER_PRODUCTION_SOLR_URL"))
-      with_modified_env SOLRCLOUD_ON: "false" do
+      prod1 = "http://prod_server_1"
+      prod2 = "http://prod_server_2"
+      with_modified_env({SOLRCLOUD_ON: "false", PRODUCTION_SOLR_URLS: "#{prod1},#{prod2}"}) do
+        expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], prod1)
+        expect(@push_bulk_double).to receive(:push_bulk).with("IndexIt", "default", [@files[0]], prod2)
+        expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], prod1)
+        expect(@push_bulk_double).to receive(:push_bulk).with("DeleteIt", "default", [@files[1]], prod2)
         subject.run
       end
     end
