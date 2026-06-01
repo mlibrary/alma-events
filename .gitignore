@@ -4,6 +4,7 @@ coverage
 .gems
 .bundle
 .env
+vendor/
 .ssh/*
 !.ssh/README.md
 sftp/ssh/*

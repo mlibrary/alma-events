@@ -1,35 +1,53 @@
 services:
-  web:
-    build: 
+  app:
+    build:
       context: .
       target: development
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    depends_on:
+      - 'redis'
+    env_file:
+      - .env
+      - env.development
+    volumes:
+      - .:/app
+  web:
+    build:
+      context: .
+      target: development
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     depends_on:
       - 'redis'
     ports:
       - "4567:4567"
     env_file:
+      - .env
       - env.development
     volumes:
       - .:/app
       - ./sftp/ssh/ssh_client_rsa_key:/etc/secret-volume/id_rsa:ro
-      - gem_cache:/gems
-
   monitor:
     image: "mockserver/mockserver"
-    ports: 
+    ports:
       - "1080:1080"
     environment:
       - SERVER_PORT=1080
-
   worker:
-    build: ./worker/.
+    build:
+      context: ./worker/.
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     volumes:
       - ./worker/.:/app
     depends_on:
       - 'redis'
     environment:
       - REDIS_URL=redis://redis:6379
-
   redis:
     image: 'redis:6.2'
     command: redis-server
@@ -37,7 +55,6 @@ services:
       - '6379:6379'
     volumes:
       - 'redis:/data'
-
   sftp:
     image: 'atmoz/sftp'
     volumes:
@@ -46,7 +63,5 @@ services:
       - ./sftp/ssh/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
       - ./sftp/ssh/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
     command: alma:1001
-
 volumes:
-  gem_cache:
   redis:

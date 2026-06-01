@@ -26,6 +26,7 @@ require File.expand_path "../../alma_webhook.rb", __FILE__
 
 module RSpecMixin
   include Rack::Test::Methods
+
   def app = Sinatra::Application
 end
 RSpec.configure do |config|
