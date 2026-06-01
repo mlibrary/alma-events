@@ -3,7 +3,7 @@ GEM
   specs:
     concurrent-ruby (1.2.2)
     connection_pool (2.4.0)
-    rack (3.0.7)
+    rack (3.1.21)
     redis-client (0.14.1)
       connection_pool
     sidekiq (7.1.0)
