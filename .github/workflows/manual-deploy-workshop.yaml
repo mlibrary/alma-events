@@ -1,36 +1,31 @@
 name: Manual Deploy to Workshop
-
 on:
   workflow_dispatch:
     inputs:
       tag:
         description: tag
         required: true
-
-
 jobs:
   build-unstable:
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/build-unstable.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/build-unstable.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       image_name: ${{ vars.IMAGE_NAME }}
       tag: ${{ github.event.inputs.tag }}
       dockerfile: Dockerfile
     secrets: inherit
-
   deploy-aim-image:
     needs: build-unstable
     name: Deploy to aim-workshop
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       environment: aim
       image: ${{ needs.build-unstable.outputs.image }}
       file: environments/alma-events/workshop/web-image.txt
     secrets: inherit
-
   deploy-search-image:
     needs: build-unstable
     name: Deploy to search-workshop
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       environment: search
       image: ${{ needs.build-unstable.outputs.image }}

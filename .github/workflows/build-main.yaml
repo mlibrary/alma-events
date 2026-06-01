@@ -1,35 +1,31 @@
 name: Docker Build Main and Deploy to Workshops
-
 on:
   workflow_run:
-    workflows: [ 'Run Tests' ]
-    branches: [ main ]
-    types: [ completed ]
-
+    workflows: ['Run Tests']
+    branches: [main]
+    types: [completed]
 jobs:
   build-unstable:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/build-unstable.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/build-unstable.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       image_name: ${{ vars.IMAGE_NAME }}
       tag: ${{ github.sha }}
       dockerfile: Dockerfile
     secrets: inherit
-
   deploy-aim-workshop:
     needs: build-unstable
     name: Deploy to AIM workshop
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       environment: aim
       image: ${{ needs.build-unstable.outputs.image }}
       file: environments/alma-events/workshop/web-image.txt
     secrets: inherit
-
   deploy-search-workshop:
     needs: build-unstable
     name: Deploy to search workshop
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       environment: search
       image: ${{ needs.build-unstable.outputs.image }}

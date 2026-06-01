@@ -1,33 +1,29 @@
 name: Build and Deploy on Release
-
 on:
   release:
-    types: [ released ]
-
+    types: [released]
 jobs:
   build-production:
     name: Build production ${{ github.event.release.tag_name }}
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/build-production.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/build-production.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       image_name: ${{ vars.IMAGE_NAME }}
       tag: ${{ github.event.release.tag_name }}
       dockerfile: Dockerfile
     secrets: inherit
-
   deploy-aim-image:
     needs: build-production
     name: Deploy to aim production
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       environment: aim
       image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.release.tag_name }}
       file: environments/alma-events/production/web-image.txt
     secrets: inherit
-
   deploy-search-image:
     needs: build-production
     name: Deploy to search production
-    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@v1
+    uses: mlibrary/platform-engineering-workflows/.github/workflows/deploy.yml@2012bb6a322ad02c45c01372de2f5e2e3d7329ac #v1.6.7
     with:
       environment: search
       image: ghcr.io/mlibrary/${{ vars.IMAGE_NAME }}:${{ github.event.release.tag_name }}
