@@ -4,6 +4,7 @@ require "json"
 require "spec_helper"
 describe "requests" do
   include Rack::Test::Methods
+
   context "get /webhook?challenge=somestring" do
     it "returns the challenge param" do
       get "/?challenge=45ab36"
