@@ -13,7 +13,6 @@ services:
       - env.development
     volumes:
       - .:/app
-      - gem_cache:/gems
   web:
     build:
       context: .
@@ -31,7 +30,6 @@ services:
     volumes:
       - .:/app
       - ./sftp/ssh/ssh_client_rsa_key:/etc/secret-volume/id_rsa:ro
-      - gem_cache:/gems
   monitor:
     image: "mockserver/mockserver"
     ports:
@@ -66,5 +64,4 @@ services:
       - ./sftp/ssh/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
     command: alma:1001
 volumes:
-  gem_cache:
   redis:
