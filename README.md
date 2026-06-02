@@ -11,19 +11,14 @@ git clone git@github.com:mlibrary/alma-events.git
 cd alma-events
 ```
 
-build web container
+run the init script
+
 ```
-docker compose build web
+./init.sh
 ```
 
-bundle install gems to a docker volume
-```
-docker compose run --rm web bundle install
-```
-generate ssh-keys
-```
-./set_up_development_ssh_keys
-```
+edit .env with actual environment variables; ask a developer if you need them
+
 
 start containers
 ```
@@ -43,7 +38,15 @@ While in development mode and while the app is `up` one can send a message direc
 docker compose exec web curl -X POST --data-binary "@PATH_TO_YOUR_MESSAGE_JSON" localhost:4567/send-dev-webhook-message
 ```
 
-# Kubernetes Configuration
+## Local ssh keys script
+
+SSH keys are generated the first time you run the `init.sh`. If your ssh keys get messed up you can rerun the script specifically for generating them:
+
+```
+./set_up_development_ssh_keys
+```
+
+## Kubernetes Configuration
 The Kubernetes deployment configuration lives in in the `environments/alma-events` directory in: 
 * [aim-kube](https://github.com/mlibrary/aim-kube)
 * [search-kube](https://github.com/mlibrary/search-kube)
