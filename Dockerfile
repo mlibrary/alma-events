@@ -12,6 +12,7 @@ RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends \
   libyaml-dev \
   git \
   curl \
+  openssh-client \
   vim 
 
 RUN groupadd -g ${GID} -o app
